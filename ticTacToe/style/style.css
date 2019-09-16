@@ -103,7 +103,7 @@ table tr td:last-child {
 
 #box #playX:hover,
 #box #playO:hover {
-    background: rgba(11, 26, 234, 0.5);
+    background: rgba(42, 50, 165, 0.226);
     color: whitesmoke;
 }
 
