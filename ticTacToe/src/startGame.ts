@@ -1,6 +1,3 @@
-import { transcode } from "buffer";
-import { brotliDecompressSync } from "zlib";
-
 export class Game {
     // Variable declaration
     private modalToggle: HTMLElement;
@@ -141,6 +138,7 @@ export class Game {
             self.startGame();
             self.playX.classList.remove("hidden");
             self.playO.classList.remove("hidden");
+            this.message.classList.add("hidden");
             self.plays.forEach(e => {
                 e.innerHTML = '';
                 e.classList.add('playable')
