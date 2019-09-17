@@ -13,8 +13,8 @@ export class Game {
     private turn: number;
     private message: HTMLElement;
     private dark: HTMLElement;
-    private playerMoveGlobal: any;
     private stopGame: boolean;
+    private token: string;
 
     constructor() {
         // DOM Selectors
@@ -28,51 +28,52 @@ export class Game {
         this.canPlay = false;
         this.stopGame = false;
         this.startGame();
+        this.token = '';
     }
 
-    startGame() {
+    startGame = (): void => {
         // Modal trigger and choose sign
         this.modalToggle.classList.remove('hidden');
         this.playX.addEventListener('click', () => {
             this.modalToggle.classList.add('hidden');
             this.playerToken = 'X';
             this.aiToken = 'O';
-            this.playerMove(this.playerToken);
+            this.token = this.playerToken;
+            this.playerMove();
         });
         this.playO.addEventListener('click', () => {
             this.modalToggle.classList.add('hidden');
             this.playerToken = 'O';
             this.aiToken = 'X';
-            this.playerMove(this.playerToken);
+            this.token = this.playerToken;
+            this.playerMove();
         });
     }
 
-    playerMove(token: string) {
-        // Instance of global this 
-        var self = this;
+    playerMove = (): void => {
         // PlayerMove function
-        this.playerMoveGlobal = function (e: any) {
-            if (self.stopGame === false) {
-                let target = e.target as HTMLElement;
-                target.innerHTML = token;
-                target.classList.remove('playable');
-                target.removeEventListener('click', self.playerMoveGlobal)
-                self.checker('player');
-                setTimeout(() => {
-                    if (self.stopGame === false) {
-                        self.aiMove(self.aiToken);
-                    }
-                }, 300);
-
-                self.turn++
-            }
-        }
         for (var i = 0; i < this.plays.length; i++) {
             this.plays[i].addEventListener("click", this.playerMoveGlobal);
         }
     }
 
-    aiMove(token: string) {
+    playerMoveGlobal = (e: any): void => {
+        if (this.stopGame === false) {
+            let target = e.target as HTMLElement;
+            target.innerHTML = this.token;
+            target.classList.remove('playable');
+            target.removeEventListener('click', this.playerMoveGlobal);
+            this.checker('player');
+            setTimeout(() => {
+                if (this.stopGame === false) {
+                    this.aiMove(this.aiToken);
+                }
+            }, 300);
+            this.turn++
+        }
+    }
+
+    aiMove = (token: string): void => {
         // Generate random number
         let randomNumber: number = Math.floor(Math.random() * 9);
         // Algorithm for computer turn
@@ -83,9 +84,8 @@ export class Game {
         this.plays[randomNumber].innerHTML = token;
         this.plays[randomNumber].classList.remove('playable');
         this.checker("comp");
-        console.log(this.turn)
     }
-    checker(who: string) {
+    checker = (who: string): void => {
         if ((who === "player")
             // Win condition
             && ((this.plays[0].innerHTML === this.playerToken && this.plays[1].innerHTML === this.playerToken && this.plays[2].innerHTML === this.playerToken)
@@ -118,7 +118,7 @@ export class Game {
             }, 1000);
         }
         // Tie condition
-        else if (this.turn === 6) {
+        else if (this.turn === 5) {
             this.stopGame = true;
             setTimeout(() => {
                 this.reset('You tied !')
@@ -126,16 +126,25 @@ export class Game {
         }
     }
 
-    reset(msg: string) {
+    reset = (msg: string): void => {
         // Reset method for modal pop after game has finished
+        this.turn = 0;
+        this.stopGame = false;
         this.playX.classList.add("hidden");
         this.playO.classList.add("hidden");
         this.modalToggle.classList.remove('hidden')
         this.message.textContent = msg;
         this.message.classList.remove("hidden");
         this.dark.classList.remove("hidden");
+        let self = this;
         setTimeout(function () {
-            location.reload()
+            self.startGame();
+            self.playX.classList.remove("hidden");
+            self.playO.classList.remove("hidden");
+            self.plays.forEach(e => {
+                e.innerHTML = '';
+                e.classList.add('playable')
+            });
         }, 1500);
     }
 }
