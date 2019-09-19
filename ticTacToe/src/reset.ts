@@ -25,16 +25,17 @@ export class Reset {
         this.message.textContent = msg;
         this.message.classList.remove("hidden");
         this.dark.classList.remove("hidden");
-        let self = this;
-        setTimeout(function () {
-            self.playX.classList.remove("hidden");
-            self.playO.classList.remove("hidden");
-            this.message.classList.add("hidden");
-            self.plays.forEach(e => {
-                e.innerHTML = '';
-                e.classList.add('playable')
-            });
-        }, 1500);
+        setTimeout(this.hideModal, 1500);
+    }
+
+    hideModal = () => {
+        this.playX.classList.remove("hidden");
+        this.playO.classList.remove("hidden");
+        this.message.classList.add("hidden");
+        this.plays.forEach(e => {
+            e.innerHTML = '';
+            e.classList.add('playable')
+        });
     }
 
 }
